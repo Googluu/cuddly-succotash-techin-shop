@@ -40,16 +40,22 @@ export class ProductsService {
   }
 
   async findOne(term: string) {
-
     let product: Product;
 
-    if ( isUUID(term) ) {
-      product = await this.productRepository.findOneBy({id: term});
+    if (isUUID(term)) {
+      product = await this.productRepository.findOneBy({ id: term });
     } else {
-      product = await this.productRepository.findOneBy({slug: term});
+      const queryBuilder = this.productRepository.createQueryBuilder();
+      product = await queryBuilder
+        .where('UPPER(title) =UPPER(:title) or slug =LOWER(:slug)', {
+          title: term,
+          slug: term,
+        })
+        .getOne();
     }
 
-    if (!product) throw new NotFoundException(`Product with #${term} not found`);
+    if (!product)
+      throw new NotFoundException(`Product with #${term} not found`);
     return product;
   }
 
