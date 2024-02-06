@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { ProductImage } from './product-image.entity';
 
-@Entity()
+@Entity({ name: 'products' })
 export class Product {
   verifySlug(slug: string) {
     this.slug = slug.toLowerCase().replaceAll(' ', '_').replaceAll("'", '');
